@@ -2,15 +2,16 @@ import "./Recipe.css";
 import React from "react";
 import { useFetch } from "../../hooks/useFetch";
 import { useParams } from "react-router-dom";
+import { useTheme } from "../../hooks/useTheme";
 
 export default function Recipe() {
   const { id } = useParams(); //grab id param from the app.js route fing (/:id) MUST match the name in Route part. this is whats int navbar
   const url = "http://localhost:3000/recipes/" + id; //affix to url
 
   const { data: recipe, isPending, error } = useFetch(url); //fetch request with the correct id
-
+  const {mode}=useTheme()
   return (
-    <div className="recipe">
+    <div className={`recipe ${mode}`}>
       {recipe && (
       <>
       <h2 className="page-title">{recipe.title}</h2>
