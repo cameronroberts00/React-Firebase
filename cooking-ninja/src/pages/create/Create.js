@@ -3,6 +3,7 @@ import React from "react";
 import { useState, useRef, useEffect } from "react";
 import { useFetch } from "../../hooks/useFetch";
 import { useHistory } from "react-router-dom";
+import { projectFirestore } from "../../firebase/config";
 export default function Create() {
   const [title, setTitle] = useState("");
   const [method, setMethod] = useState("");
@@ -16,24 +17,32 @@ export default function Create() {
     "http://localhost:3000/recipes",
     "POST"
   );
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     // console.log(title, method, cookingTime,ingredients);
-    postData({
+  const doc= {
       title,
       ingredients,
       method,
-      cookingTime: cookingTime + " minutes",
-    });
+      cookingTime: cookingTime + " minutes"
+    }
+
+    try {
+      await projectFirestore.collection('recipes').add(doc);
+      history.push('/')
+    } catch (error) {
+      console.log(error);
+    }
+
   };
 
   //when the data changes, chuck the user back ont homepage
   //the data will change becausse the post request does actually return us smt. we not gonna use it we jsut gunna use it as a sign that the request got sent
-  useEffect(() => {
-    if (data) {
-      history.push("/");
-    }
-  }, [data]);
+  // useEffect(() => {
+  //   if (data) {
+  //     history.push("/");
+  //   }
+  // }, [data]);
 
   const handleAdd = (e) => {
     e.preventDefault();
