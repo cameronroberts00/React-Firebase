@@ -30,6 +30,14 @@ const firestoreReducer = (state, action) => {
         error: null,
       };
 
+    case "DELETED_DOCUMMENT":
+      return {
+        isPending: false,
+        document: null,
+        success: true,
+        error: null,
+      };
+
     case "ERROR":
       return {
         ...state,
@@ -52,7 +60,7 @@ export const useFirestore = (collection) => {
   //only dispatch if not cancelled
   const dispatchIfNotCancelled = (action) => {
     // if (!isCancelled) { this is disabled because its always true. this means theres now no cleanup func
-      dispatch(action);
+    dispatch(action);
     // }
   };
 
@@ -64,7 +72,7 @@ export const useFirestore = (collection) => {
       const createdAt = timestamp.fromDate(new Date());
       //   spread out what we got in the doc contentwise, but into aa new object then chuck in the timestamp
       const addedDocument = await ref.add({ ...doc, createdAt });
-      console.log("Fired the add document stuff")
+      console.log("Fired the add document stuff");
       dispatchIfNotCancelled({
         type: "ADDED_DOCUMENT",
         payload: addedDocument,
@@ -76,7 +84,19 @@ export const useFirestore = (collection) => {
   };
 
   //delete document
-  const deleteDocument = async (id) => {};
+  const deleteDocument = async (id) => {
+    dispatch({ type: "IS_PENDING" });
+    try {
+      // const deletedDocument = 
+      await ref.doc(id).delete();
+      dispatchIfNotCancelled({
+        type: "DELETED_DOCUMENT"//,
+        // payload: deletedDocument,
+      });
+    } catch (error) {
+      dispatchIfNotCancelled({type:'ERROR', payload:error.message})
+    }
+  };
 
   //cleanup function on unmounting
   useEffect(() => {
