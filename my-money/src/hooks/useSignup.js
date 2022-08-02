@@ -34,11 +34,12 @@ export const useSignup = () => {
         setError(null);
       }
     } catch (error) {
-      if (!isCancelled) {
+      //This cleanup func doesnt work either. isCancelled is always true
+      // if (!isCancelled) {
         console.log(error.message);
         setError(error.message);
         setIsPending(false);
-      }
+      // }
     }
     //i added this line to fix a bug where ispending was always true
     //this might actually end up causing a memory leak lol so if that happens its probably this guy's fault
@@ -46,7 +47,8 @@ export const useSignup = () => {
   };
 
   useEffect(() => {
-    return () => setIsCancelled(true);
+    return () =>  setIsCancelled(true);
+    
   }, []);
 
   return { error, isPending, signup };

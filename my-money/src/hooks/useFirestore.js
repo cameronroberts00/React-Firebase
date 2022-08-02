@@ -1,6 +1,9 @@
 import { useReducer, useEffect, useState } from "react";
 import { projectFirestore, timestamp } from "../firebase/config";
 
+//BUG
+// the cleanup func seems to call on mount which means it sets cancel to true. so then nothing fires.
+
 let initialState = {
   document: null,
   isPending: false,
@@ -48,9 +51,9 @@ export const useFirestore = (collection) => {
 
   //only dispatch if not cancelled
   const dispatchIfNotCancelled = (action) => {
-    if (!isCancelled) {
+    // if (!isCancelled) { this is disabled because its always true. this means theres now no cleanup func
       dispatch(action);
-    }
+    // }
   };
 
   //add document
@@ -59,12 +62,14 @@ export const useFirestore = (collection) => {
 
     try {
       const createdAt = timestamp.fromDate(new Date());
-    //   spread out what we got in the doc contentwise, but into aa new object then chuck in the timestamp
-      const addedDocument = await ref.add({...doc, createdAt});
+      //   spread out what we got in the doc contentwise, but into aa new object then chuck in the timestamp
+      const addedDocument = await ref.add({ ...doc, createdAt });
+      console.log("Fired the add document stuff")
       dispatchIfNotCancelled({
         type: "ADDED_DOCUMENT",
         payload: addedDocument,
       });
+      // console.log("Document Added");
     } catch (error) {
       dispatchIfNotCancelled({ type: "ERROR", payload: error.message });
     }
