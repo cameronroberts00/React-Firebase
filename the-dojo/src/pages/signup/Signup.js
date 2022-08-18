@@ -48,7 +48,7 @@ export default function Signup() {
   };
 
   return (
-    <form className="auth-form">
+    <form className="auth-form" onSubmit={handleSubmit}>
       <h2>Sign up</h2>
       <label>
         <span>email:</span>
@@ -87,20 +87,20 @@ export default function Signup() {
       </label>
 
       {!isPending && thumbnail && (
-        <button className="btn" onClick={handleSubmit}>
+        <button className="btn">
           Sign up
         </button>
       )}
 
       {/* i added this thumbnail logic below and above to stop users being able to press thumbnail button if its null. otherwise they can have account with no thumbnail */}
       {!thumbnail && (
-          <button disabled className="btn" onClick={handleSubmit}>
+          <button disabled className="btn" >
             Sign up
           </button>
       )}
 
       {isPending && (
-        <button className="btn" disabled onClick={handleSubmit}>
+        <button className="btn" disabled >
           Loading...
         </button>
       )}
